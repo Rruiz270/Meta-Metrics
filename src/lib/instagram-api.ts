@@ -1,11 +1,11 @@
-const IG_BASE = "https://graph.instagram.com/v21.0";
+const IG_BASE = "https://graph.facebook.com/v21.0";
 
 function getIgToken() {
-  return process.env.INSTAGRAM_ACCESS_TOKEN || process.env.META_ACCESS_TOKEN || "";
+  return process.env.META_ACCESS_TOKEN || process.env.INSTAGRAM_ACCESS_TOKEN || "";
 }
 
 function getIgAccountId() {
-  return process.env.INSTAGRAM_ACCOUNT_ID || process.env.IG_BUSINESS_ACCOUNT_ID || "";
+  return process.env.IG_BUSINESS_ACCOUNT_ID || process.env.INSTAGRAM_ACCOUNT_ID || "";
 }
 
 async function igFetch<T>(path: string, params: Record<string, string> = {}): Promise<T> {
