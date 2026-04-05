@@ -103,16 +103,35 @@ export async function getAccountInsights(
   const until = Math.floor(Date.now() / 1000);
   const since = until - days * 86400;
 
-  const res = await igFetch<{ data: IgAccountInsight[] }>(
+  // Time-series metrics (period=day)
+  const timeSeriesPromise = igFetch<{ data: IgAccountInsight[] }>(
     `/${accountId}/insights`,
     {
-      metric: "reach,follower_count,profile_views,accounts_engaged",
+      metric: "reach,follower_count",
       period,
       since: String(since),
       until: String(until),
     }
-  );
-  return res.data;
+  ).catch(() => ({ data: [] as IgAccountInsight[] }));
+
+  // Total-value metrics (need metric_type=total_value)
+  const totalValuePromise = igFetch<{ data: IgAccountInsight[] }>(
+    `/${accountId}/insights`,
+    {
+      metric: "profile_views,accounts_engaged",
+      period,
+      metric_type: "total_value",
+      since: String(since),
+      until: String(until),
+    }
+  ).catch(() => ({ data: [] as IgAccountInsight[] }));
+
+  const [timeSeries, totalValue] = await Promise.all([
+    timeSeriesPromise,
+    totalValuePromise,
+  ]);
+
+  return [...timeSeries.data, ...totalValue.data];
 }
 
 export async function getFollowerDemographics(): Promise<IgAccountInsight[]> {
