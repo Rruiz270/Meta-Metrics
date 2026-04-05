@@ -12,22 +12,30 @@ export async function GET(request: Request) {
       getAccountInsights("day", days),
     ]);
 
-    // Transform insights into time-series data
+    // Transform insights into time-series or single-value data
     const insightsByMetric: Record<
       string,
       Array<{ date: string; value: number }>
     > = {};
+    const totals: Record<string, number> = {};
 
     for (const metric of insights) {
-      insightsByMetric[metric.name] = metric.values.map((v) => ({
-        date: v.end_time.split("T")[0],
-        value: v.value,
-      }));
+      if (metric.values && metric.values.length > 0) {
+        // Time-series metric
+        insightsByMetric[metric.name] = metric.values.map((v) => ({
+          date: v.end_time.split("T")[0],
+          value: v.value,
+        }));
+      } else if (metric.total_value) {
+        // Total-value metric (profile_views, accounts_engaged)
+        totals[metric.name] = metric.total_value.value;
+      }
     }
 
     return Response.json({
       profile,
       insights: insightsByMetric,
+      totals,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

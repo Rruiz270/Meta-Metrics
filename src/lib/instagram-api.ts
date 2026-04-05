@@ -56,7 +56,8 @@ export interface IgProfile {
 export interface IgAccountInsight {
   name: string;
   period: string;
-  values: Array<{ value: number; end_time: string }>;
+  values?: Array<{ value: number; end_time: string }>;
+  total_value?: { value: number };
   title: string;
   id: string;
 }

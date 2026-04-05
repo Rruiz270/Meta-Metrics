@@ -17,6 +17,7 @@ interface ProfileResponse {
     media_count: number;
   };
   insights: Record<string, Array<{ date: string; value: number }>>;
+  totals: Record<string, number>;
 }
 
 export default function ProfilePage() {
@@ -53,14 +54,15 @@ export default function ProfilePage() {
 
   const profile = data?.profile;
   const insights = data?.insights || {};
+  const totals = data?.totals || {};
 
-  // Calculate totals from insights
-  const totalEngaged =
-    insights.accounts_engaged?.reduce((sum, d) => sum + d.value, 0) || 0;
+  // Time-series totals
   const totalReach =
     insights.reach?.reduce((sum, d) => sum + d.value, 0) || 0;
-  const totalProfileViews =
-    insights.profile_views?.reduce((sum, d) => sum + d.value, 0) || 0;
+
+  // Single-value totals from API
+  const totalProfileViews = totals.profile_views || 0;
+  const totalEngaged = totals.accounts_engaged || 0;
 
   return (
     <div>
@@ -97,47 +99,29 @@ export default function ProfilePage() {
           icon={UserPlus}
         />
         <KpiCard
-          title="Total Reach"
-          value={formatNumber(totalReach)}
+          title="Accounts Engaged"
+          value={formatNumber(totalEngaged)}
           icon={Eye}
         />
       </div>
 
       {/* Charts */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        {insights.follower_count && insights.follower_count.length > 0 && (
-          <FollowerChart
-            data={insights.follower_count}
-            title="Follower Count"
-            color="#3b82f6"
-            dataLabel="Followers"
-          />
-        )}
-
-        {insights.accounts_engaged && insights.accounts_engaged.length > 0 && (
-          <FollowerChart
-            data={insights.accounts_engaged}
-            title="Accounts Engaged"
-            color="#8b5cf6"
-            dataLabel="Engaged"
-          />
-        )}
-
         {insights.reach && insights.reach.length > 0 && (
           <FollowerChart
             data={insights.reach}
             title="Daily Reach"
-            color="#22c55e"
+            color="#3b82f6"
             dataLabel="Reach"
           />
         )}
 
-        {insights.profile_views && insights.profile_views.length > 0 && (
+        {insights.follower_count && insights.follower_count.length > 0 && (
           <FollowerChart
-            data={insights.profile_views}
-            title="Profile Views"
-            color="#f59e0b"
-            dataLabel="Views"
+            data={insights.follower_count}
+            title="Follower Count"
+            color="#22c55e"
+            dataLabel="Followers"
           />
         )}
       </div>
@@ -149,12 +133,6 @@ export default function ProfilePage() {
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="rounded-lg bg-muted/50 p-4">
-            <p className="text-sm text-muted-foreground">Accounts Engaged</p>
-            <p className="mt-1 text-2xl font-bold text-card-foreground">
-              {formatNumber(totalEngaged)}
-            </p>
-          </div>
-          <div className="rounded-lg bg-muted/50 p-4">
             <p className="text-sm text-muted-foreground">Total Reach</p>
             <p className="mt-1 text-2xl font-bold text-card-foreground">
               {formatNumber(totalReach)}
@@ -164,6 +142,12 @@ export default function ProfilePage() {
             <p className="text-sm text-muted-foreground">Profile Views</p>
             <p className="mt-1 text-2xl font-bold text-card-foreground">
               {formatNumber(totalProfileViews)}
+            </p>
+          </div>
+          <div className="rounded-lg bg-muted/50 p-4">
+            <p className="text-sm text-muted-foreground">Accounts Engaged</p>
+            <p className="mt-1 text-2xl font-bold text-card-foreground">
+              {formatNumber(totalEngaged)}
             </p>
           </div>
         </div>
