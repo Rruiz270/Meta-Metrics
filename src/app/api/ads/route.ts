@@ -35,8 +35,14 @@ export async function GET(request: Request) {
 
     const merged = campaigns.map((c) => {
       const insight = insightsMap.get(c.id);
+      const dailyBudget = parseInt(c.daily_budget || "0", 10) / 100;
+      const budgetRemaining = parseInt(c.budget_remaining || "0", 10) / 100;
+      const estimatedSpend = dailyBudget > 0 ? dailyBudget - budgetRemaining : 0;
       return {
         ...c,
+        daily_budget_display: dailyBudget,
+        budget_remaining_display: budgetRemaining,
+        estimated_spend_today: estimatedSpend > 0 ? estimatedSpend : 0,
         spend: insight?.spend || "0",
         impressions: insight?.impressions || "0",
         reach: insight?.reach || "0",

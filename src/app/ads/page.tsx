@@ -14,6 +14,9 @@ interface CampaignData {
   name: string;
   status: string;
   daily_budget?: string;
+  daily_budget_display?: number;
+  budget_remaining_display?: number;
+  estimated_spend_today?: number;
   spend: string;
   impressions: string;
   reach: string;
@@ -66,10 +69,15 @@ export default function AdsPage() {
   }
 
   const campaigns = data?.campaigns || [];
-  const totalSpend = campaigns.reduce(
+  const insightsSpend = campaigns.reduce(
     (sum, c) => sum + parseFloat(c.spend),
     0
   );
+  const estimatedSpend = campaigns.reduce(
+    (sum, c) => sum + (c.estimated_spend_today || 0),
+    0
+  );
+  const totalSpend = insightsSpend > 0 ? insightsSpend : estimatedSpend;
   const totalImpressions = campaigns.reduce(
     (sum, c) => sum + parseInt(c.impressions, 10),
     0

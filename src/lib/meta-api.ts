@@ -37,6 +37,7 @@ export interface Campaign {
   name: string;
   status: string;
   daily_budget?: string;
+  budget_remaining?: string;
   lifetime_budget?: string;
   objective?: string;
 }
@@ -73,7 +74,7 @@ export async function getCampaigns(): Promise<Campaign[]> {
   const res = await metaFetch<CampaignsResponse>(
     `/${adAccountId}/campaigns`,
     {
-      fields: "name,status,daily_budget,lifetime_budget,objective",
+      fields: "name,status,daily_budget,lifetime_budget,budget_remaining,objective",
       limit: "100",
     }
   );
