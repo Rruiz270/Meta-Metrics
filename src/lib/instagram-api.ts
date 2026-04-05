@@ -106,7 +106,7 @@ export async function getAccountInsights(
   const res = await igFetch<{ data: IgAccountInsight[] }>(
     `/${accountId}/insights`,
     {
-      metric: "impressions,reach,profile_views,follower_count",
+      metric: "reach,follower_count,profile_views,accounts_engaged",
       period,
       since: String(since),
       until: String(until),

@@ -55,8 +55,8 @@ export default function ProfilePage() {
   const insights = data?.insights || {};
 
   // Calculate totals from insights
-  const totalImpressions =
-    insights.impressions?.reduce((sum, d) => sum + d.value, 0) || 0;
+  const totalEngaged =
+    insights.accounts_engaged?.reduce((sum, d) => sum + d.value, 0) || 0;
   const totalReach =
     insights.reach?.reduce((sum, d) => sum + d.value, 0) || 0;
   const totalProfileViews =
@@ -114,12 +114,12 @@ export default function ProfilePage() {
           />
         )}
 
-        {insights.impressions && insights.impressions.length > 0 && (
+        {insights.accounts_engaged && insights.accounts_engaged.length > 0 && (
           <FollowerChart
-            data={insights.impressions}
-            title="Daily Impressions"
+            data={insights.accounts_engaged}
+            title="Accounts Engaged"
             color="#8b5cf6"
-            dataLabel="Impressions"
+            dataLabel="Engaged"
           />
         )}
 
@@ -149,9 +149,9 @@ export default function ProfilePage() {
         </h3>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="rounded-lg bg-muted/50 p-4">
-            <p className="text-sm text-muted-foreground">Total Impressions</p>
+            <p className="text-sm text-muted-foreground">Accounts Engaged</p>
             <p className="mt-1 text-2xl font-bold text-card-foreground">
-              {formatNumber(totalImpressions)}
+              {formatNumber(totalEngaged)}
             </p>
           </div>
           <div className="rounded-lg bg-muted/50 p-4">
